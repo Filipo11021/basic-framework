@@ -2,12 +2,14 @@ import { effect } from "../reactivity";
 import { Child } from "./transform.types";
 
 function applyChild(element: HTMLElement, child: Child) {
-  if (child instanceof Function) {
-    const span = document.createElement("span");
+  if (typeof child === "function") {
+    const text = document.createTextNode(child());
+
     effect(() => {
-      span.textContent = child();
+      text.textContent = String(child());
     });
-    element.append(span);
+
+    element.append(text);
     return;
   }
 
@@ -16,7 +18,7 @@ function applyChild(element: HTMLElement, child: Child) {
     return;
   }
 
-  element.append(document.createTextNode(child.toString()));
+  element.append(String(child));
 }
 
 export function applyChildren(element: HTMLElement, children: Child[]) {
